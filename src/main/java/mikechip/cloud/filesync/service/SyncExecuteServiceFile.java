@@ -1,5 +1,6 @@
 package mikechip.cloud.filesync.service;
 
+import mikechip.cloud.filesync.config.ApplicationContext;
 import mikechip.cloud.filesync.config.Config;
 import mikechip.cloud.filesync.dto.TransferPair;
 import org.slf4j.Logger;
@@ -12,13 +13,14 @@ public class SyncExecuteServiceFile implements SyncExecuteService {
     private static final Logger logger
             = LoggerFactory.getLogger(SyncServiceFile.class);
 
-    public void execute(Config config) throws IOException {
+    public void execute() throws IOException {
         logger.debug("execute start");
+        Config config=ApplicationContext.getInstance().getConfig();
         SyncService syncService=new SyncServiceFile();
-        FileFilter fileFilter=new FileFilter(config);
-        List<TransferPair> pairs=syncService.buildTransferPairs(config,fileFilter);
+        FileFilter fileFilter=new FileFilter();
+        List<TransferPair> pairs=syncService.buildTransferPairs(fileFilter);
 
-        FileService fileService = new FileService(new FileServiceNIO());
+        FileService fileService = ApplicationContext.getInstance().getFileService();
         for (TransferPair pair:pairs) {
             if (logger.isDebugEnabled())
             logger.debug("Coping from "+pair.getSourceName()+" to "+pair.getDestName());

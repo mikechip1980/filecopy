@@ -1,5 +1,6 @@
 package mikechip.cloud.filesync.service;
 
+import mikechip.cloud.filesync.config.ApplicationContext;
 import mikechip.cloud.filesync.config.ApplicationException;
 import mikechip.cloud.filesync.config.Config;
 import mikechip.cloud.filesync.config.PathNotReadyException;
@@ -21,17 +22,18 @@ public class SyncServiceFile implements SyncService {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM");
 
 
-    public List<TransferPair> buildTransferPairs(Config config, FileFilter filter){
+    public List<TransferPair> buildTransferPairs(FileFilter fileFilter){
         logger.debug("buildTransferPairs start");
         //we consider that config has only one folder at the moment
             List<TransferPair> pairs = new LinkedList();
-            buildTransferFolderPairs(config,filter, pairs);
+            buildTransferFolderPairs(fileFilter, pairs);
         logger.debug("buildTransferPairs end");
         return pairs;
     }
 
-    private void buildTransferFolderPairs(Config config, FileFilter fileFilter, List<TransferPair> pairs){
+    private void buildTransferFolderPairs(FileFilter fileFilter,List<TransferPair> pairs){
         logger.debug("buildTransferFolderPairs start");
+        Config config = ApplicationContext.getInstance().getConfig();
         String sourceFolder=config.getSourcePath(), destFolder=config.getDestPath();
         File srcFileFolder= new File(sourceFolder);
         if (!srcFileFolder.isDirectory()) throw new ApplicationException("Source folder is not a Directory "+sourceFolder);
