@@ -25,14 +25,19 @@ public class SyncServiceFile implements SyncService {
         logger.debug("buildTransferPairs start");
         //we consider that config has only one folder at the moment
             List<TransferPair> pairs = new LinkedList();
-            buildTransferFolderPairs(config,filter, pairs);
+
+            String[] srcFolders= config.getSourcePath().split(Config.PATH_DELIMITER);
+            for (String srcFolder:srcFolders) {
+                logger.debug("working with source folder "+srcFolder,srcFolder);
+                buildTransferFolderPairs(srcFolder,config, filter, pairs);
+            }
         logger.debug("buildTransferPairs end");
         return pairs;
     }
 
-    private void buildTransferFolderPairs(Config config, FileFilter fileFilter, List<TransferPair> pairs){
+    private void buildTransferFolderPairs(String sourceFolder,Config config, FileFilter fileFilter, List<TransferPair> pairs){
         logger.debug("buildTransferFolderPairs start");
-        String sourceFolder=config.getSourcePath(), destFolder=config.getDestPath();
+        String destFolder=config.getDestPath();
         File srcFileFolder= new File(sourceFolder);
         if (!srcFileFolder.isDirectory()) throw new ApplicationException("Source folder is not a Directory "+sourceFolder);
         if (!srcFileFolder.canRead()) throw new PathNotReadyException("Can not read source folder"+sourceFolder);

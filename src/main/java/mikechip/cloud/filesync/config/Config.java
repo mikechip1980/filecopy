@@ -15,6 +15,7 @@ public class Config {
     public final static String RUNNTIME_FOLDER_NAME="./runtime";
     public final static String LAST_SYNC_FILE_NAME=RUNNTIME_FOLDER_NAME+"/lastSyncDate";
     public  final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+    public final static String PATH_DELIMITER =";";
     private Properties prop;
     private String sourcePath,destPath;
     private Date lastSyncDate;
@@ -42,7 +43,7 @@ public class Config {
         File lastSyncFile=new File(LAST_SYNC_FILE_NAME);
         if (!lastSyncFile.exists()) {
             lastSyncFile.createNewFile();
-            updateLastSyncDate(new Date(0));
+            resetLastSyncDate();
         }
     }
 
@@ -61,7 +62,11 @@ public class Config {
         updateLastSyncDate(new Date());
     }
 
-    private void updateLastSyncDate(Date date) throws IOException {
+    public static void resetLastSyncDate() throws IOException {
+        updateLastSyncDate(new Date(0));
+    }
+
+    private static void updateLastSyncDate(Date date) throws IOException {
         FileWriter fw=null;
         try {
             fw = new FileWriter(LAST_SYNC_FILE_NAME);
@@ -87,7 +92,7 @@ public class Config {
     private void validateConfig(){
         if (getSourcePath()==null) throw new IllegalArgumentException(SRC_PATH_PARAM+" parameter should be specified");
         if (getDestPath()==null) throw new IllegalArgumentException(DEST_PATH_PARAM+" parameter should be specified");
-        if (getSourcePath().contains(";")||getDestPath().contains(";")) throw new IllegalArgumentException("Multiple paths are not supported yet");
+        //if (getSourcePath().contains(PATH_DELIMITER)||getDestPath().contains(";")) throw new IllegalArgumentException("Multiple paths are not supported yet");
     }
 
 

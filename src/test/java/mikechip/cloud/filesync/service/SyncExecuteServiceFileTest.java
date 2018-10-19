@@ -3,24 +3,49 @@ package mikechip.cloud.filesync.service;
 import mikechip.cloud.filesync.config.Config;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
 public class SyncExecuteServiceFileTest {
 
+    private static final Logger logger
+            = LoggerFactory.getLogger(SyncExecuteServiceFileTest.class);
     private Config config;
 
     @Before
     public void init() throws IOException, ParseException {
-        Config.init();
-        config=Config.getInstance();
+
     }
 
     @Test
-    public void executeTest() throws IOException {
+    public void executeTestFromStartOfTimes() throws IOException, ParseException {
+        logger.info("Start executeTestFromStartOfTimes");
+            Config.resetLastSyncDate();
+            Config.init();
+            config=Config.getInstance();
+        logger.info("Cleaning folder");
+            deleteFolder(new File(config.getDestPath()),1);
             SyncExecuteService srv=new SyncExecuteServiceFile();
             srv.execute(config);
+        logger.info("End executeTestFromStartOfTimes");
+    }
+
+    public static void deleteFolder(File folder, int level) {
+        File[] files = folder.listFiles();
+        if(files!=null) { //some JVMs return null for empty dirs
+            for(File f: files) {
+                if(f.isDirectory()) {
+                    deleteFolder(f,level+1);
+                } else {
+                    f.delete();
+                }
+            }
+        }
+        if (level>1) folder.delete();
     }
 
 
