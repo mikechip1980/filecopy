@@ -7,6 +7,5 @@ import java.io.FileFilter;
 import java.util.List;
 
 public interface SyncService {
-    //public SyncService getInstance();
-    public List<TransferPair> buildTransferPairs(Config config, FileFilter filter);
+     List<TransferPair> buildTransferPairs(FileFilter filter);
 }

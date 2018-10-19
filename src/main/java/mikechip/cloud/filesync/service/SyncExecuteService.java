@@ -5,5 +5,5 @@ import mikechip.cloud.filesync.config.Config;
 import java.io.IOException;
 
 public interface SyncExecuteService {
-    public void execute(Config config) throws IOException;
+    public void execute() throws IOException;
 }

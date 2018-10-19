@@ -1,5 +1,6 @@
 package mikechip.cloud.filesync.service;
 
+import mikechip.cloud.filesync.config.ApplicationContext;
 import mikechip.cloud.filesync.config.Config;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,25 +13,25 @@ import java.text.ParseException;
 
 public class SyncExecuteServiceFileTest {
 
+
     private static final Logger logger
             = LoggerFactory.getLogger(SyncExecuteServiceFileTest.class);
-    private Config config;
+    private Config config=ApplicationContext.getInstance().getConfig();
 
     @Before
     public void init() throws IOException, ParseException {
 
     }
 
+
     @Test
     public void executeTestFromStartOfTimes() throws IOException, ParseException {
         logger.info("Start executeTestFromStartOfTimes");
             Config.resetLastSyncDate();
-            Config.init();
-            config=Config.getInstance();
         logger.info("Cleaning folder");
             deleteFolder(new File(config.getDestPath()),1);
             SyncExecuteService srv=new SyncExecuteServiceFile();
-            srv.execute(config);
+            srv.execute();
         logger.info("End executeTestFromStartOfTimes");
     }
 
