@@ -52,20 +52,21 @@ public class SyncServiceFile implements SyncService {
 
         File[] srcFileList =srcFileFolder.listFiles(fileFilter);
         logger.debug("Files after filter "+srcFileList.length);
-        if (srcFileList!=null&&srcFileList.length>0)
-            for (File srcFile:srcFileList){
-                   File destFile=new File(buildDestinationPath(srcFile,destFolder),srcFile.getName());
+        if (srcFileList!=null&&srcFileList.length>0) {
+            FolderNameExtractor folderNameExtractor = ApplicationContext.getInstance().getFolderNameExtractor();
+            for (File srcFile : srcFileList) {
+                File destFile = new File(folderNameExtractor.build(srcFile, destFolder), srcFile.getName());
                 if (logger.isDebugEnabled())
-                    logger.debug(String.format("File examned - source: %s; dest: %s",srcFile.getName(),destFile.getName() ));
+                    logger.debug(String.format("File examned - source: %s; dest: %s", srcFile.getName(), destFile.getName()));
                 if (srcFile.isFile())
-                       if (isCopyPair(srcFile,destFile)) {
-                           pairs.add(new FilePair(srcFile, destFile));
-                           if (logger.isDebugEnabled())
-                           logger.debug("Pair added");
-                        }
-                   //implement recirsive logic here for subfolders
+                    if (isCopyPair(srcFile, destFile)) {
+                        pairs.add(new FilePair(srcFile, destFile));
+                        if (logger.isDebugEnabled())
+                            logger.debug("Pair added");
+                    }
+                //implement recirsive logic here for subfolders
             }
-
+        }
 
         logger.debug("buildTransferFolderPairs end");
     }
@@ -79,13 +80,5 @@ public class SyncServiceFile implements SyncService {
         return false;
     }
 
-    private String buildDestinationPath(File srcFile, String destFolder) {
-            //if (srcFile==null) throw new IllegalArgumentException("srcFile is null");
-            String folder=destFolder+"/"+dateFormat.format(srcFile.lastModified());
-          /*  File folderFile = new File(folder);
-            if (!folderFile.exists())
-                if (!folderFile.mkdir()) throw new PathNotReadyException("Can not create destination folder "+folder);
-                */
-            return folder;
-    }
+
 }

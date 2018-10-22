@@ -16,7 +16,7 @@ public class SyncExecuteServiceFile implements SyncExecuteService {
     public void execute() throws IOException {
         logger.debug("execute start");
         Config config=ApplicationContext.getInstance().getConfig();
-        SyncService syncService=new SyncServiceFile();
+        SyncService syncService=ApplicationContext.getInstance().getSyncService();
         FileFilter fileFilter=new FileFilter();
         List<TransferPair> pairs=syncService.buildTransferPairs(fileFilter);
 

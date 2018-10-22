@@ -7,7 +7,11 @@ public class ApplicationContext {
     private static ApplicationContext appContext=new ApplicationContext();
     private ApplicationContext(){init();}
     private Config config;
+
+
+
     private SyncService syncService;
+    private FolderNameExtractor folderNameExtractor;
 
     public Config getConfig() {
         return config;
@@ -23,6 +27,10 @@ public class ApplicationContext {
 
     public SyncExecuteService getSyncExecuteService() {
         return syncExecuteService;
+    }
+
+    public FolderNameExtractor getFolderNameExtractor() {
+        return folderNameExtractor;
     }
 
     private FileService fileService;
@@ -41,5 +49,7 @@ public class ApplicationContext {
         syncService=new SyncServiceFile();
         fileService = new FileService(new FileServiceNIO());
         syncExecuteService=new SyncExecuteServiceFile();
+        folderNameExtractor=new FolderNameExtractorLastUpdate();
+
     }
 }
