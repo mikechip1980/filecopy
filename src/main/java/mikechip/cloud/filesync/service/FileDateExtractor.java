@@ -1,7 +1,8 @@
 package mikechip.cloud.filesync.service;
 
 import java.io.File;
+import java.util.Date;
 
-public interface FolderNameExtractor {
-    String build(File srcFile, String destFolder);
+public interface FileDateExtractor {
+    Date get(File srcFile);
 }

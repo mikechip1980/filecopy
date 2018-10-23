@@ -2,6 +2,8 @@ package mikechip.cloud.filesync.config;
 
 import mikechip.cloud.filesync.service.*;
 
+import java.util.Date;
+
 
 public class ApplicationContext {
     private static ApplicationContext appContext=new ApplicationContext();
@@ -11,7 +13,7 @@ public class ApplicationContext {
 
 
     private SyncService syncService;
-    private FolderNameExtractor folderNameExtractor;
+    private FileDateExtractor fileDateExtractor;
 
     public Config getConfig() {
         return config;
@@ -29,8 +31,8 @@ public class ApplicationContext {
         return syncExecuteService;
     }
 
-    public FolderNameExtractor getFolderNameExtractor() {
-        return folderNameExtractor;
+    public FileDateExtractor getFileDateExtractor() {
+        return fileDateExtractor;
     }
 
     private FileService fileService;
@@ -46,10 +48,12 @@ public class ApplicationContext {
           throw new RuntimeException(e);
         }
         config =Config.getInstance();
-        syncService=new SyncServiceFile();
+       // fileDateExtractor=(file)->new Date(file.lastModified());
+        fileDateExtractor=new FolderNameExtractorMeta();
+        syncService=new SyncServiceFile(fileDateExtractor);
         fileService = new FileService(new FileServiceNIO());
         syncExecuteService=new SyncExecuteServiceFile();
-        folderNameExtractor=new FolderNameExtractorLastUpdate();
+
 
     }
 }

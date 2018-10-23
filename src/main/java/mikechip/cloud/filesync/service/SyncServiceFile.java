@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +21,11 @@ public class SyncServiceFile implements SyncService {
     private static final Logger logger
             = LoggerFactory.getLogger(SyncServiceFile.class);
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM");
+    FileDateExtractor fileDateExtractor;
 
+    public SyncServiceFile(FileDateExtractor fileDateExtractor){
+        this.fileDateExtractor=fileDateExtractor;
+    }
 
     public List<TransferPair> buildTransferPairs(FileFilter fileFilter){
         logger.debug("buildTransferPairs start");
@@ -53,9 +58,8 @@ public class SyncServiceFile implements SyncService {
         File[] srcFileList =srcFileFolder.listFiles(fileFilter);
         logger.debug("Files after filter "+srcFileList.length);
         if (srcFileList!=null&&srcFileList.length>0) {
-            FolderNameExtractor folderNameExtractor = ApplicationContext.getInstance().getFolderNameExtractor();
             for (File srcFile : srcFileList) {
-                File destFile = new File(folderNameExtractor.build(srcFile, destFolder), srcFile.getName());
+                File destFile = new File(getDestFolderName(srcFile, destFolder), srcFile.getName());
                 if (logger.isDebugEnabled())
                     logger.debug(String.format("File examned - source: %s; dest: %s", srcFile.getName(), destFile.getName()));
                 if (srcFile.isFile())
@@ -80,5 +84,9 @@ public class SyncServiceFile implements SyncService {
         return false;
     }
 
+    private String getDestFolderName(File srcFile, String destFolder){
+        return String.format("%s/%s",destFolder,dateFormat.format(fileDateExtractor.get(srcFile)));
+
+    }
 
 }
