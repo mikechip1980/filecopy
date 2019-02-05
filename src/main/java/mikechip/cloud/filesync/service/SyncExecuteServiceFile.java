@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 public class SyncExecuteServiceFile implements SyncExecuteService {
@@ -18,7 +19,7 @@ public class SyncExecuteServiceFile implements SyncExecuteService {
         Config config=ApplicationContext.getInstance().getConfig();
         SyncService syncService=ApplicationContext.getInstance().getSyncService();
         FileFilter fileFilter=new FileFilter();
-        List<TransferPair> pairs=syncService.buildTransferPairs(fileFilter);
+        Collection<TransferPair> pairs=syncService.buildTransferPairs(fileFilter);
 
         FileService fileService = ApplicationContext.getInstance().getFileService();
         for (TransferPair pair:pairs) {

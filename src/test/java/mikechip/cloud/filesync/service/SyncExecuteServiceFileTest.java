@@ -35,6 +35,24 @@ public class SyncExecuteServiceFileTest {
         logger.info("End executeTestFromStartOfTimes");
     }
 
+    @Test
+    public void executeTestFromStartOfTimesParallel() throws IOException, ParseException {
+        logger.info("Start executeTestFromStartOfTimesParallel");
+        Config.resetLastSyncDate();
+        logger.info("Cleaning folder");
+        deleteFolder(new File(config.getDestPath()),1);
+        SyncExecuteService srv=new SyncExecuteServicefileParallel();
+        srv.execute();
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            System.out.println("Main thread Interrupted");
+        }
+        System.out.println("Main thread exiting.");
+        logger.info("End executeTestFromStartOfTimesParallel");
+    }
+
+
     public static void deleteFolder(File folder, int level) {
         File[] files = folder.listFiles();
         if(files!=null) { //some JVMs return null for empty dirs

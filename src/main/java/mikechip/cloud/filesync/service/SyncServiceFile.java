@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class SyncServiceFile implements SyncService {
     }
 
 
-    private void buildTransferFolderPairs(String sourceFolder, FileFilter fileFilter, List<TransferPair> pairs,int folderNum){
+    public void buildTransferFolderPairs(String sourceFolder, FileFilter fileFilter, Collection<TransferPair> pairs, int folderNum){
         logger.debug("buildTransferFolderPairs start");
 
         Config config = ApplicationContext.getInstance().getConfig();
@@ -66,7 +67,7 @@ public class SyncServiceFile implements SyncService {
                         logger.debug(String.format("File examined - source: %s; dest: %s", srcFile.getName(), destFile.getName()));
                     if (srcFile.isFile())
                         if (isCopyPair(srcFile, destFile)) {
-                            //we have to add suffix, it prevents the case where 2 files have the same name from 2 folders
+                            //we have to add suffix, it prevents the case where 2 files having the same name from 2 folders
                             pairs.add(new FilePair(srcFile, new File(getFinalDestFileName(destFile,folderNum))));
                             if (logger.isDebugEnabled())
                                 logger.debug("Pair added");
