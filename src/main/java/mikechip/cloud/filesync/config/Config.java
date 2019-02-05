@@ -1,5 +1,8 @@
 package mikechip.cloud.filesync.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,12 +13,17 @@ public class Config {
 
     private static  Config config;
 
+
+    private static final Logger logger
+            = LoggerFactory.getLogger(Config.class);
+
     private final String SRC_PATH_PARAM="files.source.path";
     private final String DEST_PATH_PARAM="files.destination.path";
     public final static String RUNNTIME_FOLDER_NAME="./runtime";
     public final static String LAST_SYNC_FILE_NAME=RUNNTIME_FOLDER_NAME+"/lastSyncDate";
     public  final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     public final static String PATH_DELIMITER =";";
+    public final String PROPERTIES_FILE_NAME = "config.properties";
     private Properties prop;
     private String sourcePath,destPath;
     private Date lastSyncDate;
@@ -95,18 +103,31 @@ public class Config {
         //if (getSourcePath().contains(PATH_DELIMITER)||getDestPath().contains(";")) throw new IllegalArgumentException("Multiple paths are not supported yet");
     }
 
+    private InputStream getResourcePropertiesStream(){
+        return getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME);
+    }
+
+    private InputStream getPropertiesStream(){
+        InputStream stream;
+        try {
+             stream = new FileInputStream(new File("./config/"+PROPERTIES_FILE_NAME));
+             logger.debug("external config file found");
+        } catch (FileNotFoundException e) {
+            stream= getResourcePropertiesStream();
+            logger.debug("resource config file found");
+        }
+        return stream;
+    }
 
     public void loadConfigProperties() throws IOException {
         InputStream inputStream=null;
         if (prop==null) prop=new Properties();
         try {
-            String propFileName = "config.properties";
-
-            inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+            inputStream=getPropertiesStream();
             if (inputStream != null) {
                 prop.load(inputStream);
             } else {
-                throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
+                throw new FileNotFoundException("property file '" + PROPERTIES_FILE_NAME + "' not found in the classpath");
             }
         } finally {
             if (inputStream!=null) inputStream.close();

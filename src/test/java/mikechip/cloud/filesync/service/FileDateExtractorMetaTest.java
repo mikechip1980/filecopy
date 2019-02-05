@@ -21,7 +21,7 @@ public class FileDateExtractorMetaTest {
 
 
 
-    @Test
+    //@Test
     public void printMetaInfoTest() throws ImageProcessingException, IOException {
         String srcFile = "/home/mikechip/Work/Java/sandbox/filecopy/source2/" + videoFileName;
         logger.info(srcFile);

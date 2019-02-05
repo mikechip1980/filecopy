@@ -1,4 +1,5 @@
 package mikechip.cloud.filesync;
+import mikechip.cloud.filesync.config.ApplicationContext;
 import mikechip.cloud.filesync.service.SyncExecuteService;
 import mikechip.cloud.filesync.service.SyncExecuteServiceFile;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ public class Application {
     public static void main(String[] args) throws IOException {
   //      logger.info("Start");
   //      logger.debug("Start");
+        ApplicationContext.getInstance();
         SyncExecuteService srv=new SyncExecuteServiceFile();
         srv.execute();
     }

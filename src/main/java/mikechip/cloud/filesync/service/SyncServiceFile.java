@@ -33,16 +33,17 @@ public class SyncServiceFile implements SyncService {
         //we consider that config has only one folder at the moment
             List<TransferPair> pairs = new LinkedList();
             String[] srcFolders= config.getSourcePath().split(Config.PATH_DELIMITER);
+            int i=0;
             for (String srcFolder:srcFolders) {
                 logger.debug("working with source folder "+srcFolder,srcFolder);
-                buildTransferFolderPairs(srcFolder,fileFilter, pairs);
+                buildTransferFolderPairs(srcFolder,fileFilter, pairs,++i);
             }
         logger.debug("buildTransferPairs end");
         return pairs;
     }
 
 
-    private void buildTransferFolderPairs(String sourceFolder, FileFilter fileFilter, List<TransferPair> pairs){
+    private void buildTransferFolderPairs(String sourceFolder, FileFilter fileFilter, List<TransferPair> pairs,int folderNum){
         logger.debug("buildTransferFolderPairs start");
 
         Config config = ApplicationContext.getInstance().getConfig();
@@ -56,24 +57,50 @@ public class SyncServiceFile implements SyncService {
         if (!destFileFolder.canWrite()) throw new PathNotReadyException("Can not read dest folder"+destFolder);
 
         File[] srcFileList =srcFileFolder.listFiles(fileFilter);
-        logger.debug("Files after filter "+srcFileList.length);
-        if (srcFileList!=null&&srcFileList.length>0) {
-            for (File srcFile : srcFileList) {
-                File destFile = new File(getDestFolderName(srcFile, destFolder), srcFile.getName());
-                if (logger.isDebugEnabled())
-                    logger.debug(String.format("File examned - source: %s; dest: %s", srcFile.getName(), destFile.getName()));
-                if (srcFile.isFile())
-                    if (isCopyPair(srcFile, destFile)) {
-                        pairs.add(new FilePair(srcFile, destFile));
-                        if (logger.isDebugEnabled())
-                            logger.debug("Pair added");
-                    }
-                //implement recirsive logic here for subfolders
+        if (srcFileList!=null) {
+            logger.debug("Files after filter " + srcFileList.length);
+            if (srcFileList.length > 0) {
+                for (File srcFile : srcFileList) {
+                    File destFile = new File(getDestFolderName(srcFile, destFolder), srcFile.getName());
+                    if (logger.isDebugEnabled())
+                        logger.debug(String.format("File examined - source: %s; dest: %s", srcFile.getName(), destFile.getName()));
+                    if (srcFile.isFile())
+                        if (isCopyPair(srcFile, destFile)) {
+                            //we have to add suffix, it prevents the case where 2 files have the same name from 2 folders
+                            pairs.add(new FilePair(srcFile, new File(getFinalDestFileName(destFile,folderNum))));
+                            if (logger.isDebugEnabled())
+                                logger.debug("Pair added");
+                        }
+                    //implement recirsive logic here for subfolders
+                }
             }
         }
 
         logger.debug("buildTransferFolderPairs end");
     }
+
+    protected String getFinalDestFileName(File destFile, int folderNum){
+        Pair p=stripExtension(destFile.getAbsolutePath());
+        String fname=String.format("%s_%d.%s",p.fileName,folderNum,p.extention);
+        logger.debug("Final dest file name:"+fname);
+        return fname;
+    }
+
+    public static class Pair {String fileName,extention;
+
+        public Pair(String fileName, String extention) {
+            this.fileName = fileName;
+            this.extention = extention;
+        }
+    }
+
+    public static Pair stripExtension (String str) {
+        if (str == null) return null;
+        int pos = str.lastIndexOf(".");
+        if (pos == -1) return new Pair(str,null);
+        return new Pair(str.substring(0, pos),str.substring(pos+1));
+    }
+
 
     private boolean isCopyPair(File srcFile,File destFile){
         if (srcFile==null) return false;
@@ -85,7 +112,7 @@ public class SyncServiceFile implements SyncService {
     }
 
     private String getDestFolderName(File srcFile, String destFolder){
-        return String.format("%s/%s",destFolder,dateFormat.format(fileDateExtractor.get(srcFile)));
+        return String.format("%s/%s_01_cloud",destFolder,dateFormat.format(fileDateExtractor.get(srcFile)));
 
     }
 
