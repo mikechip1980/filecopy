@@ -30,8 +30,12 @@ public class SyncExecuteServiceFileTest {
             Config.resetLastSyncDate();
         logger.info("Cleaning folder");
             deleteFolder(new File(config.getDestPath()),1);
+        long start_time = System.nanoTime();
             SyncExecuteService srv=new SyncExecuteServiceFile();
             srv.execute();
+        long end_time = System.nanoTime();
+        double difference = (end_time - start_time) / 1e6;
+        System.out.println("Main thread exiting. Time:"+difference);
         logger.info("End executeTestFromStartOfTimes");
     }
 
@@ -41,14 +45,12 @@ public class SyncExecuteServiceFileTest {
         Config.resetLastSyncDate();
         logger.info("Cleaning folder");
         deleteFolder(new File(config.getDestPath()),1);
-        SyncExecuteService srv=new SyncExecuteServicefileParallel();
+        long start_time = System.nanoTime();
+        SyncExecuteService srv=new SyncExecuteServiceFileParallel();
         srv.execute();
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            System.out.println("Main thread Interrupted");
-        }
-        System.out.println("Main thread exiting.");
+        long end_time = System.nanoTime();
+        double difference = (end_time - start_time) / 1e6;
+        System.out.println("Main thread exiting. Time:"+difference);
         logger.info("End executeTestFromStartOfTimesParallel");
     }
 

@@ -1,9 +1,8 @@
 package mikechip.cloud.filesync.dto;
 
+import java.util.concurrent.LinkedBlockingQueue;
 
-import java.util.concurrent.LinkedBlockingDeque;
-
-public class PairQueue extends LinkedBlockingDeque<TransferPair> {
+public class PairQueue extends LinkedBlockingQueue<TransferPair> {
     @Override
     public boolean add(TransferPair pair) {
         try {

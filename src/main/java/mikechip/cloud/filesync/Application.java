@@ -1,9 +1,7 @@
 package mikechip.cloud.filesync;
 import mikechip.cloud.filesync.config.ApplicationContext;
 import mikechip.cloud.filesync.service.SyncExecuteService;
-import mikechip.cloud.filesync.service.SyncExecuteServiceFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import mikechip.cloud.filesync.service.SyncExecuteServiceFileParallel;
 
 import java.io.IOException;
 
@@ -14,7 +12,7 @@ public class Application {
   //      logger.info("Start");
   //      logger.debug("Start");
         ApplicationContext.getInstance();
-        SyncExecuteService srv=new SyncExecuteServiceFile();
+        SyncExecuteService srv=new SyncExecuteServiceFileParallel();
         srv.execute();
     }
 }
